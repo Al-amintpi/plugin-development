@@ -214,14 +214,31 @@ class Product_List extends \WP_List_Table(){
  #### আমাদের ফর্ম যে ডাটাগুলি আছে ওই দাঁতগুলি কে একটি ভ্যারিয়েবল নিবো 
   ### self invoking function anonymous function ❓❓
   * এই ফাঙ্কশন টি নিজে নিজে কে কল করে 
-  - self invoking function anonymous function তৈরি করে হয় যেন এই ফাঙ্কশন টি অন্য কোন ফাঙ্কশন সাথে মারামারি না করে। 
+  - self invoking function anonymous function তৈরি করে হয় যেন এই ফাঙ্কশন টি অন্য কোন ফাঙ্কশন সাথে মারামারি না করে। <br>
   
   
   ```
  ;(function($){
-      var data = 
+      var data = $(this).serialize(); // form ডাটা গুলি সব data ভ্যারিয়েবল রাখলাম 
  })(JQUERY)
  ```
+ আমাদেরকে ফাঙ্কশন টি ব্যবহার করতে হবে যার মাধ্যমে wp-ajax.php সম্পর্ক তৈরি করে দিবো  <br>
+ ```
+ wp_localize_script( 'lmfwppt-scripts (handle)', 'lmfwppt_params (objectname)',
+         	array(
+         	    'nonce' => wp_create_nonce( 'lmwppt_nonce' ),
+         	    'ajaxurl' => admin_url( 'admin-ajax.php' ),
+         	)
+         );
+ 
+ ```
+ 
+ wp_localize_script অনেক গুলি প্যারামিটার থাকে তার মধ্যে আমরা দুইটি পারমিটের use করবো <br>
+ আমাদের যে স্ক্রিপ্ট ফাইলটি আছে ওইটা add করবো প্রথম প্যারামিটার আর দ্বিতীয় প্যারামিটার তৃতীয় প্যারামিটার আমরা একটি array pass করবো <br>
+ 
+ 
+ 
+ 
  
  
 
