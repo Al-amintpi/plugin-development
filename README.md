@@ -209,4 +209,19 @@ class Product_List extends \WP_List_Table(){
  
  ```
  
+ 
+ # আজকে আমরা জানবো কিভাবে ওয়ার্ডপ্রেস Ajax ব্যবহার করতে হয় 
+ #### আমাদের ফর্ম যে ডাটাগুলি আছে ওই দাঁতগুলি কে একটি ভ্যারিয়েবল নিবো 
+  ### self invoking function anonymous function ❓❓
+  * এই ফাঙ্কশন টি নিজে নিজে কে কল করে 
+  - self invoking function anonymous function তৈরি করে হয় যেন এই ফাঙ্কশন টি অন্য কোন ফাঙ্কশন সাথে মারামারি না করে। 
+  
+  
+  ```
+ ;(function($){
+      var data = 
+ })(JQUERY)
+ ```
+ 
+ 
 
