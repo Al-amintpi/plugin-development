@@ -237,6 +237,16 @@ class Product_List extends \WP_List_Table(){
  আমাদের যে স্ক্রিপ্ট ফাইলটি আছে ওইটা add করবো প্রথম প্যারামিটার আর দ্বিতীয় প্যারামিটার তৃতীয় প্যারামিটার আমরা একটি array pass করবো <br>
  
  
+ # আজকে আমরা জানবো কিভাবে wp Delete করতে হয় ❤
+ ```
+ wp_nonce_url( admin_url(
+    'admin-post.php?action=wd-ac-delete-address&id=' . $item->id ) 
+'wd-ac-delete-address' )
+ 
+ ```
+ ✔ wp_nonce_url দুইটি প্যারামিটার পাস করে 
+ ✔ প্রথমটি url 
+ ✔ দ্বিতীয়টি action 
  
  
  
