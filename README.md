@@ -239,6 +239,8 @@ class Product_List extends \WP_List_Table(){
  
  # আজকে আমরা জানবো কিভাবে wp Delete করতে হয় ❤
  ```
+ $actions['delete'] = sprintf( '<a href="%s" class="submitdelete" onclick="return confirm(\'Are you sure?\');" title="%s">%s</a>', wp_nonce_url( admin_url( 'admin-post.php?action=lmfwppt-delete-license&id=' . $item->id ), 'lmfwppt-delete-license' ), $item->id, __( 'Delete', 'license-manager-wppt' ), __( 'Delete', 'license-manager-wppt' ) );
+
  wp_nonce_url( admin_url(
     'admin-post.php?action=wd-ac-delete-address&id=' . $item->id ) 
 'wd-ac-delete-address' )
@@ -258,6 +260,11 @@ class Product_List extends \WP_List_Table(){
             [ 'id' => $id ],
             [ '%d' ]
         );
+    }
+
+
+    function __construct() {
+        add_action( 'admin_init', [ $this, 'delete_license' ] );
     }
 
     // Get The Action
