@@ -248,6 +248,46 @@ class Product_List extends \WP_List_Table(){
  ✔ প্রথমটি url 
  ✔ দ্বিতীয়টি action 
  
+ ```
+ // Delete License Id
+    function lmfwppt_delete_license( $id ) {
+        global $wpdb;
+
+        return $wpdb->delete(
+            $wpdb->prefix . 'lmfwppt_licenses',
+            [ 'id' => $id ],
+            [ '%d' ]
+        );
+    }
+
+    // Get The Action
+    function delete_license() {
+        
+    if( isset( $_REQUEST['action'] ) && $_REQUEST['action'] == "lmfwppt-delete-license" ){
+        if ( ! wp_verify_nonce( $_REQUEST['_wpnonce'], 'lmfwppt-delete-license' ) ) {
+            wp_die( 'Are you cheating?' );
+        }
+
+        if ( ! current_user_can( 'manage_options' ) ) {
+            wp_die( 'Are you cheating?' );
+        }
+
+        $id = isset( $_REQUEST['id'] ) ? intval( $_REQUEST['id'] ) : 0; 
+
+        if ( $this->lmfwppt_delete_license( $id ) ) {
+            $redirected_to = admin_url( 'admin.php?page=license-manager-wppt-licenses&deleted=true' );
+        } else {
+            $redirected_to = admin_url( 'admin.php?page=license-manager-wppt-licenses&deleted=false' );
+        }
+
+        wp_redirect( $redirected_to );
+        exit;
+
+        }    
+    } 
+ 
+ ```
+ 
  
  
  
