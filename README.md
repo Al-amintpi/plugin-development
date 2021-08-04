@@ -307,20 +307,39 @@ class Product_List extends \WP_List_Table(){
 
 # ক্লাস সম্পর্কে জানবো 
 
-আমরা অনেক সময় ক্লাস সামনে 
+আমরা অনেক সময় ক্লাস সামনে final লিখে দেখি। 
+final টি হচ্ছে একটি কীওয়ার্ড। 
+final কীওয়ার্ড দেয়ার মাধ্যমে ওই class টা কে overriden করতে পারবে না। 
+
 
 ✌ ক্লাস ভিতরে যে ফাঙ্কশন গুলি লিখে হয় তাদের আমরা বলি মেথড <br>
 ✌ php তে অনেক গুলি magic মেথড রয়েছে 
 
-construct মেথড সম্পর্কে জানবো <br>
+# construct মেথড সম্পর্কে জানবো <br>
 ❤ construct method একটি magic method .<br>
 ❤ construct method রিটার্ন করে যাই না। <br>
 ❤ construct method প্যারামিটার পাস করে যাই। <br>
 ❤ construct method লিখার সময় অবশ্যই ( __ ) দিতে হবে। <br>
 ❤ construct method কে আলাদা করে রিটার্ন করতে হয় না। <br>
 ❤ যখন ক্লাস লিখি তখন বা তার সাথে সাথে construct মেথড টি call হয়। <br>
+# static মেথড সম্পর্কে জানবো  
+STATIC METHOD : স্ট্যাটিক ফাংশন ক্লাসের সাথে যুক্ত, ক্লাসের উদাহরণ নয়। তাদের কেবল স্থির পদ্ধতি এবং স্ট্যাটিক ভেরিয়েবল অ্যাক্সেস করার অনুমতি দেওয়া হয়েছে।
 
- 
+স্ট্যাটিক মেথড ex :
+```
+     public static function init(){
+     	static $instance = false;
+
+        if ( ! $instance ) {
+            $instance = new self();
+        }
+
+        return $instance;
+	}
+
+```
+
+
  
  
 
