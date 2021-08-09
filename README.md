@@ -376,6 +376,402 @@ function lmfwpptwcext(){
 lmfwpptwcext();
 
 ```
- 
+## আজকে আমরা জানবো কিভাবে woocommerce meta box তৈরি করতে হয়
+আমি license নামে একটি metabox তৈরি করলাম <br>
+
+<img src="/Downloads/download.png" alt="My cool logo"/>
+
+```
+/*
+    * 
+	 * Custom Meta Box And Tab
+	 */
+	add_filter('woocommerce_product_data_tabs', 'lmfwpptwcext_product_settings_tabs' );
+	function lmfwpptwcext_product_settings_tabs( $tabs ){
+	 
+	    $tabs['lmfwpptwcext'] = array(
+	        'label'    => __('License Manager', 'lmfwpptwcext'),
+	        'target'   => 'lmfwpptwcext_product_data',
+	        'class'   => 'show_if_simple',
+	        'priority' => 21,
+	    );
+	    return $tabs;
+	 
+	}
+	 
+	/*
+	 * Tab content
+	 */
+	add_action( 'woocommerce_product_data_panels', 'lmfwpptwcext_product_panels' );
+	function lmfwpptwcext_product_panels(){
+
+		$post_id = get_the_ID();
+	 
+	    echo '<div id="lmfwpptwcext_product_data" class="lmfwpptwcext_product_data panel woocommerce_options_panel">';
+	 
+	    woocommerce_wp_checkbox( array(
+	        'id'           => 'active_license_management',
+	        'class'       => 'lmfwpptwcext_checkbox',
+	        'value'        => get_post_meta( $post_id, 'active_license_management', true ),
+	        'label'        => __('Active License Management', 'lmfwpptwcext')
+	    ) );
+
+		    echo '<div class="lmfwpptwcext_product_fields">';
+
+			    woocommerce_wp_select( array(
+			        'id'          => 'select_product_type',
+			        'class'       => 'select_product_type',
+			        'value'       => get_post_meta( $post_id, 'select_product_type', true ),
+			        'label'       => __('Select Products Type', 'lmfwpptwcext'),
+			        'options'     => array( '' => 'Please select', 'theme' => 'Theme', 'plugin' => 'Plugin'),
+			    ) );
+
+			    woocommerce_wp_select( array(
+			        'id'          => 'theme_product_list',
+			        'class'          => 'select_product_list theme_product_list',
+			        'value'       => get_post_meta( $post_id, 'theme_product_list', true ),
+			        'label'       => __('Select Product', 'lmfwpptwcext'),
+			        'options'     => lmfwpptwcext_generate(lmfwppt_get_product_list("theme")),
+			    ) );
+
+			    woocommerce_wp_select( array(
+			        'id'          => 'plugin_product_list',
+			        'class'          => 'select_product_list plugin_product_list',
+			        'value'       => get_post_meta( $post_id, 'plugin_product_list', true ),
+			        'label'       => __('Select Product', 'lmfwpptwcext'),
+			        'options'     => lmfwpptwcext_generate(lmfwppt_get_product_list("plugin")),
+			    ) );
+
+			    woocommerce_wp_select( array(
+			        'id'          => 'select_package',
+			        'class'          => 'select_package',
+			        'value'       => get_post_meta( $post_id, 'select_package', true ),
+			        'label'       => __('Select Package', 'lmfwpptwcext'),
+			        'options'     => array( '' => 'Please select'),
+			    ) );
+		 
+		    echo '</div>';
+	    echo '</div>';
+
+	}
+	
+
+	/*
+	*
+	* Custom Meta box save
+	*/
+	add_action( 'woocommerce_process_product_meta', 'lmfwpptwcext_save_fields', 10, 2 );
+	function lmfwpptwcext_save_fields( $id, $post ){
+		
+		update_post_meta( $id, 'active_license_management', $_POST['active_license_management'] );
+		
+		if( !empty( $_POST['select_product_type'] ) ) {
+			update_post_meta( $id, 'select_product_type', $_POST['select_product_type'] );
+		} 
+
+		if( !empty( $_POST['theme_product_list'] ) ) {
+			update_post_meta( $id, 'theme_product_list', $_POST['theme_product_list'] );
+		}
+
+		if( !empty( $_POST['plugin_product_list'] ) ) {
+			update_post_meta( $id, 'plugin_product_list', $_POST['plugin_product_list'] );
+		}
+	 
+		if( !empty( $_POST['select_package'] ) ) {
+			update_post_meta( $id, 'select_package', $_POST['select_package'] );
+		}  
+    }
+
+
+    /*
+    *
+    * product list select option pass
+    */
+	function lmfwpptwcext_generate( $data_arr ){
+		$return = array();
+		$return[''] = __('Select Product','textdomain');
+		foreach ( $data_arr as $data ) {
+			$return[$data->id] = $data->name;
+		}
+		return $return;
+	}
+
+```
+
+## এখন আমরা জানবো কিভাবে variations তৈরি করতে হয় <br>
+
+code example
+```
+/*
+	*
+	* custom field on product Add Variations
+	*/
+	add_action( 'woocommerce_variation_options_pricing', 'bbloomer_add_custom_field_to_variations', 10, 3 );
+	function bbloomer_add_custom_field_to_variations( $loop, $variation_data, $variation ) {
+	 
+	   $post_id = $variation->ID;
+
+		echo '<div id="lmfwpptwcext_product_data" class="lmfwpptwcext_product_data panel woocommerce_options_panel">';
+		 
+		    woocommerce_wp_checkbox( array(
+		        'id'          => 'active_license_management[' . $loop . ']',
+		        'class'       => 'lmfwpptwcext_checkbox',
+		        'value'       => get_post_meta( $post_id, 'active_license_management', true ),
+		        'label'       => __('Active License Management', 'lmfwpptwcext'),
+		    ) );
+
+		    echo '<div class="lmfwpptwcext_product_fields">';
+
+			    woocommerce_wp_select( array(
+			        'id'          => 'select_product_type[' . $loop . ']',
+			        'class'          => 'select_product_type',
+			        'value'       => get_post_meta( $post_id, 'select_product_type', true ),
+			        'label'       => __('Select Products Type', 'lmfwpptwcext'),
+			        'options'     => array( '' => 'Please select', 'theme' => 'Theme', 'plugin' => 'Plugin'),
+			    ) );
+
+			    woocommerce_wp_select( array(
+			        'id'          => 'theme_product_list[' . $loop . ']',
+			        'class'          => 'select_product_list theme_product_list',
+			        'value'       => get_post_meta( $post_id, 'theme_product_list', true ),
+			        'label'       => __('Select Product', 'lmfwpptwcext'),
+			        'options'     => lmfwpptwcext_generate(lmfwppt_get_product_list("theme")),
+			    ) );
+
+			    woocommerce_wp_select( array(
+			        'id'          => 'plugin_product_list[' . $loop . ']',
+			        'class'          => 'select_product_list plugin_product_list',
+			        'value'       => get_post_meta( $post_id, 'plugin_product_list', true ),
+			        'label'       => __('Select Product', 'lmfwpptwcext'),
+			        'options'     => lmfwpptwcext_generate(lmfwppt_get_product_list("plugin")),
+			    ) );
+
+			    woocommerce_wp_select( array(
+			        'id'          => 'select_package[' . $loop . ']',
+			        'class'       => 'select_package',
+			        'value'       => get_post_meta( $post_id, 'select_package', true ),
+			        'label'       => __('Select Package', 'lmfwpptwcext'),
+			        'options'     => array( '' => 'Please select'),
+			    ) );
+			 
+			    echo '</div>';
+		    echo '</div>';
+	}
+
+
+	/*
+	*
+	* Save custom field on product variation save
+	*/ 
+	add_action( 'woocommerce_save_product_variation', 'bbloomer_save_custom_field_variations', 10, 2 );
+	function bbloomer_save_custom_field_variations( $variation_id, $i ) {
+
+		update_post_meta( $variation_id, 'active_license_management', esc_attr( $_POST['active_license_management'][$i] ) );
+
+		if( !empty( $_POST['select_product_type'][$i] ) ) {
+			update_post_meta( $variation_id, 'select_product_type', esc_attr( $_POST['select_product_type'][$i] ) );
+		}	
+
+		if( !empty( $_POST['theme_product_list'][$i] ) ) {
+			update_post_meta( $variation_id, 'theme_product_list', esc_attr( $_POST['theme_product_list'][$i] ) );
+		}
+
+		if( !empty( $_POST['plugin_product_list'][$i] ) ) {
+			update_post_meta( $variation_id, 'plugin_product_list', esc_attr( $_POST['plugin_product_list'][$i] ) );
+		}
+
+		if( !empty( $_POST['select_package'][$i] ) ) {
+			update_post_meta( $variation_id, 'select_package', esc_attr( $_POST['select_package'][$i] ) );
+		}
+
+	}
+
+
+
+```
+
+## এখন আমরা জানবো কিভাবে woocommerce My account tab কিভাবে মেনু অ্যাড করতে হয়
+
+আমি license নামে একটি মেনু অ্যাড করবো 
+
+```
+/*
+	*
+	* Add A Menu on My Account menu tab
+	*/
+	add_filter ( 'woocommerce_account_menu_items', 'lmfwpptwcext_license_link', 40 );
+	function lmfwpptwcext_license_link( $menu_links ){
+		
+		$menu_links = array_slice( $menu_links, 0, 5, true ) 
+		+ array( 'license' => 'License' )
+		+ array_slice( $menu_links, 5, NULL, true );
+		
+		return $menu_links;
+	}
+
+	add_action( 'init', 'lmfwpptwcext_add_endpoint' );
+	function lmfwpptwcext_add_endpoint() {
+		add_rewrite_endpoint( 'license', EP_PAGES );
+
+	}
+
+	add_action( 'woocommerce_account_license_endpoint', 'lmfwpptwcext_my_account_endpoint_content' );
+	function lmfwpptwcext_my_account_endpoint_content() {
+		echo 'Last time you logged in: yesterday from Safari.';
+	}
+
+```
+## এখন আমরা জানবো কিভাবে cart ও order page Variations Data show করাতে হয় 
+
+```
+/**
+	 * Add engraving text to cart item.
+	 *
+	 * @param array $cart_item_data
+	 * @param int   $product_id
+	 * @param int   $variation_id
+	 *
+	 * @return array
+	 */
+	add_filter( 'woocommerce_add_cart_item_data', 'iconic_add_engraving_text_to_cart_item', 10, 3 );
+	function iconic_add_engraving_text_to_cart_item( $cart_item_data, $product_id, $variation_id ) {
+		
+		$product_id = isset( $variation_id ) && $variation_id != "0" ? sanitize_text_field( $variation_id ) : sanitize_text_field( $product_id );
+
+		$is_active = get_post_meta( $product_id, 'active_license_management', true );
+		if( !$is_active ) {
+			return $cart_item_data;
+		}else{
+			$cart_item_data['is_active'] = $is_active;
+		}
+
+		$product_type = get_post_meta( $product_id, 'select_product_type', true );
+		if( isset( $product_type ) ) {
+			$cart_item_data['product_type'] = $product_type;
+		}
+
+		$theme_id = get_post_meta( $product_id, 'theme_product_list', true );
+		if( isset( $theme_id ) ) {
+			$cart_item_data['theme_id'] = $theme_id;
+		}
+
+		$plugin_id = get_post_meta( $product_id, 'plugin_product_list', true );
+		if( isset( $plugin_id ) ) {
+			$cart_item_data['plugin_id'] = $plugin_id;
+		}
+
+		$package_id = get_post_meta( $product_id, 'select_package', true );
+		if( isset( $package_id ) ) {
+			$cart_item_data['package_id'] = $package_id;
+		}
+
+		return $cart_item_data;
+	}
+
+
+	/*
+	* Display custom data on cart and checkout page.
+	*
+	*/
+	add_filter( 'woocommerce_get_item_data', 'get_item_data' , 25, 2 );
+	function get_item_data ( $item_data, $cart_item ) {
+	     
+		$product_id = isset( $cart_item['variation_id'] ) && $cart_item['variation_id'] != "0" ? sanitize_text_field( $cart_item['variation_id'] ) : sanitize_text_field( $cart_item['product_id'] );
+
+		$is_active = isset($cart_item['is_active']) ? sanitize_text_field($cart_item['is_active']) : null;
+
+		if( !$is_active ) {
+			return $item_data;
+		}
+
+		$product_type = isset( $cart_item['product_type'] ) ? sanitize_text_field( $cart_item['product_type'] ) : null;
+		if ( $product_type ) {
+			$item_data[] = array(
+				'key'     => __( 'Product Type', 'lmfwpptwcext' ),
+				'value'   =>  $product_type,
+				'display' => '',
+			);
+		}
+
+	    
+	    if ( $product_type == "theme" && isset( $cart_item['theme_id'] ) && $cart_item['theme_id'] ) {
+	    	$theme_name = LMFWPPT_ProductsHandler::get_product($cart_item['theme_id'])['name'];
+		    $item_data[] = array(
+				'key'     => __( 'Theme Name', 'lmfwpptwcext' ),
+				'value'   => $theme_name,
+				'display' => '',
+			);
+	    }
+		
+	     
+		if ( $product_type == "plugin" && isset( $cart_item['plugin_id'] ) && $cart_item['plugin_id'] ) {
+			$plugin_name = LMFWPPT_ProductsHandler::get_product($cart_item['plugin_id'])['name'];
+				$item_data[] = array(
+				'key'     => __( 'Plugin Name', 'textdomain' ),
+				'value'   => $plugin_name,
+				'display' => '',
+			);
+		}
+
+		if( isset( $cart_item['package_id'] ) && $cart_item['package_id'] ) {
+			$package_name = LMFWPPT_ProductsHandler::get_package_name($cart_item['package_id']);
+			   
+				$item_data[] = array(
+				'key'     => __( 'Package', 'textdomain' ),
+				'value'   => $package_name,
+				'display' => '',
+			);
+		}
+
+		return $item_data;
+	}
+
+
+
+```
+
+## এখন আমরা জানবো কিভাবে Email Variations Data গুলি শো করতে হয় 
+
+```
+
+/**
+	 * Add engraving text to order.
+	 *
+	 * @param WC_Order_Item_Product $item
+	 * @param string                $cart_item_key
+	 * @param array                 $values
+	 * @param WC_Order              $order
+	 */
+	add_action( 'woocommerce_checkout_create_order_line_item', 'iconic_add_engraving_text_to_order_items', 10, 4 );
+	function iconic_add_engraving_text_to_order_items( $item, $cart_item_key, $values, $order ) {
+
+		$is_active = isset($values['is_active']) ? sanitize_text_field($values['is_active']) : null;
+
+		if( !$is_active ) {
+			return;
+		}
+
+		$product_type = isset( $values['product_type'] ) ? sanitize_text_field( $values['product_type'] ) : null;
+		if($product_type){
+			$item->add_meta_data( __( 'Product_type', 'iconic' ), $product_type );
+		}
+
+		if ( $product_type == "theme" && isset( $values['theme_id'] ) && $values['theme_id'] ){
+			$theme_name = LMFWPPT_ProductsHandler::get_product($values['theme_id'])['name'];
+			$item->add_meta_data( __( 'Theme Name', 'iconic' ), $theme_name );
+		}
+
+		if ( $product_type == "plugin" && isset( $values['plugin_id'] ) && $values['plugin_id'] ){
+			$plugin_name = LMFWPPT_ProductsHandler::get_product($values['plugin_id'])['name'];
+			$item->add_meta_data( __( 'Plugin Name', 'iconic' ), $plugin_name );
+		}
+
+		if( isset( $values['package_id'] ) && $values['package_id'] ){
+			$package_name = LMFWPPT_ProductsHandler::get_package_name($values['package_id']);
+			$item->add_meta_data( __( 'Package Name', 'iconic' ), $package_name );
+		}
+	}
+
+``
  
 
