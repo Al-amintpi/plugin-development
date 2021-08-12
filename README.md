@@ -772,6 +772,136 @@ code example
 		}
 	}
 
-``
+```
  
+ ## আজকে আমরা জানবো কিভাবে wordpress get_options table ডাটা পাস করতে হয় 
+ ```
+ <?php 
+   $lmfwppt_settings = get_option( 'lmfwppt_settings' );
+   $code_prefix = isset( $lmfwppt_settings['license_code_prefix'] ) ? $lmfwppt_settings['license_code_prefix'] : null;
+   $character_limit = isset( $lmfwppt_settings['license_code_character_limit'] ) ? $lmfwppt_settings['license_code_character_limit'] : null;
 
+?>
+
+
+<div class="wrap">
+   <h1 class="wp-heading-inline"><?php _e( 'Settings Page', 'lmfwppt' ); ?></h1>
+</div>
+
+
+
+<div class="wrap">
+   <h1><?php _e( 'Add Setting', 'lmfwppt' ); ?></h1>
+
+      <form action="" method="post" id="setting-add-form">
+         
+         <table class="form-table" role="presentation">
+            <tbody>
+               <tr>
+                  <th scope="row"><label for="license_code_prefix">License Code Prefix</label></th>
+                  <td><input type="text" name="lmfwppt_settings[license_code_prefix]" id="license_code_prefix" class="regular-text" placeholder="<?php esc_attr_e( 'License Code Prefix', 'lmfwppt' ); ?>" value="<?php echo $code_prefix  ?>"></td>
+               </tr>
+               <tr>
+                  <th scope="row"><label for="license_code_character_limit">License Code Character Limit</label></th>
+                  <td><input type="text" name="lmfwppt_settings[license_code_character_limit]" id="license_code_character_limit" class="regular-text" placeholder="<?php esc_attr_e( 'License Code Character Limit', 'lmfwppt' ); ?>" value="<?php echo $character_limit; ?>"></td>
+               </tr>
+               <tr>
+                  <th>
+                     <div class="lmwppt-inner-card lmfwppt-buttons card-shameless">
+                        <input type="hidden" name="lmaction" value="setting_add_form">
+                         
+                         
+                        <?php wp_nonce_field( 'lmfwppt-add-product-nonce' ); ?>
+                        <?php submit_button( __( 'Add Setting', 'lmfwppt' ), 'primary' ); ?>
+                     </div>
+                  </th>
+               </tr>
+            </tbody>
+         </table>      
+      </form>
+
+</div>
+
+ ```
+ ফাঙ্কশন ব্যবহার করতে হবে <br>
+ 
+ ```
+  add_action( 'wp_ajax_setting_add_form', [ $this, 'setting_add' ] );
+  // Setting add form action
+    function setting_add(){
+        if ( isset( $_POST['lmaction'] ) && $_POST['lmaction'] == "setting_add_form" ) {
+           $lmfwppt_settings = isset( $_POST['lmfwppt_settings'] ) ? $_POST['lmfwppt_settings'] : array();
+           update_option( 'lmfwppt_settings', $lmfwppt_settings );
+        }
+        die();
+    }
+ 
+ ```
+ value save হচ্ছে কি না তা চেক করার জন্য Get_options গিয়ে lmfwppt_settings search করবো 
+ ajax Request 
+ ```
+  // Add Setting
+        $(document).on('submit', '#setting-add-form', function(e) {
+            e.preventDefault();
+            var $this = $(this);
+
+            var formData = new FormData(this);
+            formData.append('action', 'setting_add_form');
+
+            $.ajax({
+                type: 'post',
+                url: ajaxurl,
+                data: formData,
+                processData: false,
+                contentType: false,
+                beforeSend: function(data) {
+
+                },
+                complete: function(data) {
+
+                },
+                success: function(data) {
+                    console.log(data);
+
+                },
+                error: function(data) {
+                    console.log(data);
+
+                },
+
+            });
+
+        });
+ 
+ ```
+ এই ফাঙ্কশন মাধ্যমে get_options ডাটা গুলি কে ধরতে পারবো 
+ ```
+ // Get option data 
+function lmfwppt_get_option( $name = null ){
+    
+    if ( !$name ) {
+        return;
+    }
+
+    $settings = get_option( 'lmfwppt_settings' );
+    return isset( $settings[$name] ) ? $settings[$name] : "";
+}
+ 
+ ```
+ 
+ আমরা পাসওয়ার্ড জেনারেট করবো 
+ ```
+ // License Key Genarate function
+    public static function generate_license_key() {
+
+        $prefix = lmfwppt_get_option('license_code_prefix');
+        $limit = lmfwppt_get_option('license_code_character_limit');
+        $key = wp_generate_password( $limit, false, false );
+        return $prefix.$key;
+    }
+ 
+ ```
+ 
+ 
+ 
+ 
